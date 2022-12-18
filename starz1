@@ -1,0 +1,849 @@
+
+BGForDirt = 888
+BGForCaveBackground = 880
+BGForLava = 880
+BGForRock = 880
+
+GenerateRandomWorld = 1
+startdf = true
+dfcount = 0
+
+
+function webhuk(Logs)
+    local script = [[
+        $webHookUrl = "]].. Webhook ..[["
+        $cpu = (Get-WmiObject win32_processor | Measure-Object -property LoadPercentage -Average | Select Average).Average
+        [System.Collections.ArrayList]$embedArray = @()
+    $thumbnailObject = [PSCustomObject]@{
+        url = "https://cdn.discordapp.com/attachments/1031531937904467969/1031532036445454437/1213984.jpg"
+    }
+    $color = Get-Random -Minimum 0 -Maximum 16777215
+    $title = 'Staryuu Auto DirtFarm'
+    $description = "]].. Logs..[["
+
+    $footer = [PSCustomObject]@{
+        icon_url = "https://cdn.discordapp.com/attachments/1031531937904467969/1031532036445454437/1213984.jpg"
+        text = "]].."Staryuu | Date : "..(os.date"%d/%m/%y":upper().." Time : ")..os.date("%I")..":"..os.date("%M").." "..os.date("%p"):upper()..[["
+    }
+
+
+    $embedObject = [PSCustomObject]@{
+        color = $color
+        title = $title
+        description = $description
+        thumbnail = $thumbnailObject
+        footer = $footer
+    }
+
+    [System.Collections.ArrayList]$embedArray = @()
+    $embedArray.Add($embedObject)
+
+    $payload = [PSCustomObject]@{
+        embeds = $embedArray
+    }
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    Invoke-RestMethod -Uri $webHookUrl -Body ($payload | ConvertTo-Json -Depth 4) -Method Post -ContentType 'application/json'
+    ]]
+
+    local pipe = io.popen("powershell -command -", "w")
+    pipe:write(script)
+    pipe:close()
+  end
+
+  function LogTheName(text)
+    file = io.open("WorldLogs.txt", "a")
+    file:write(text.."\n")
+    file:close()
+   end
+
+  function ToinkBG()
+    count = 0
+    for _, tile in pairs(getTiles()) do
+        if tile.bg ~= 0 then
+            count = count + 1
+        end
+    end
+    return count
+end
+
+function ToinkFG()
+    count = 0
+    for _, tile in pairs(getTiles()) do
+        if tile.fg ~= 0 then
+            count = count + 1
+        end
+    end
+    return count
+end
+
+function GenerateAWorld()
+    ::BACK31::
+    sleep(3000)
+    sendPacket(3,"action|quit_to_exit")
+    sleep(3000)
+    local WorldsToGenerate = ""
+    for i = 1,Main.WorldLetters do
+        WorldsToGenerate = WorldsToGenerate..string.char(math.random(97,122))
+    end
+    sendPacket(3,"action|join_request\nname|" .. WorldsToGenerate.."\ninvitedWorld|0")
+    sleep(5000)
+
+    if ToinkBG() > 3600 or ToinkFG() > 3601 then
+        goto BACK31
+    end
+
+    for _,t in pairs(getTiles()) do
+        if t.fg== 242 or t.fg== 9640 or t.fg== 202 or t.fg== 204 or t.fg== 206 or t.fg== 1796 or t.fg== 4994 or t.fg== 7188 or t.fg== 2408 or t.fg== 2950 or t.fg== 4428 or t.fg== 4802 or t.fg== 5814 or t.fg== 5260 or t.fg== 5980 or t.fg== 8470 or t.fg== 10410 or t.fg== 11550 or t.fg== 11586 then
+            goto BACK31
+        end
+    end
+end
+
+
+function PutWlAndJammer()
+    if Main.useWL == true then
+        place(242,0,-1)
+        sleep(800)
+        place(226,1,-1)
+        sleep(800)
+        punch(1,-1)
+        sleep(800)
+        place(SubSetting.enteranceID,-1,0)
+        sleep(800)
+        place(SubSetting.enteranceID,1,0)
+        sleep(800)
+    else
+        hit = 8
+        pl = 2
+       
+        function reapplyLock(x,y)
+            wrench(x,y)
+            sleep(2000)
+            sendPacket(2,"action|dialog_return\ndialog_name|lock_edit\ntilex|"..(math.floor(getBot().x/32)+x).."|\ntiley|"..(math.floor(getBot().y/32)+y).."|\nbuttonClicked|recalcLock\n\ncheckbox_public|0\ncheckbox_ignore|1")
+        end
+        function editDoor(label,world,doorid,x,y)
+            wrench(x,y)
+            sleep(1000)
+            sendPacket(2,"action|dialog_return\ndialog_name|door_edit\ntilex|"..math.floor(getBot().x/32)+x.."|\ntiley|"..math.floor(getBot().y/32)+y.."|\ndoor_name|"..label.."\ndoor_target|"..world.."\ndoor_id|"..doorid.."\ncheckbox_locked|1")
+            say("done")
+        end
+        
+     
+
+        for i=1 ,hit do
+            punch(-1,1)
+            sleep(300)
+            punch(-2,1)
+            sleep(300)
+            punch(-2,2)
+            sleep(300)
+            punch(-1,2)
+            sleep(300)
+            punch(0,2)
+            sleep(300)
+            punch(1,2)
+            sleep(300)
+            punch(2,2)
+            sleep(300)
+            punch(2,1)
+            sleep(300)
+            end
+            place(202,0,-1)
+            sleep(800)
+            place(2,-1,-1)
+            sleep(800)
+            place(12,-1,1)
+            sleep(800)
+            place(226,1,-1)
+            sleep(800)
+            punch(1,-1)
+            sleep(800)
+            place(SubSetting.enteranceID,-1,0)
+            sleep(800)
+            place(SubSetting.enteranceID,1,0)
+            sleep(800)
+            reapplyLock(0,-1)
+            sleep(800)
+            editDoor(Doors.Label, Doors.Destination, Doors.ID,-1,1)
+    
+            for i=1 ,pl do
+            place(2,-2,1)
+            sleep(300)
+            place(2,2,1)
+            sleep(300)
+            end
+        MoveWhenInWhiteDoor()
+        end  
+end
+
+function SeedsScanner(ID)
+    Count = 0
+    for _, obj in pairs(getObjects()) do 
+        if obj.id == ID then 
+            Count = Count + obj.count
+        end
+    end
+    return Count
+end
+
+function DropTheItems(itemID, count)
+    if findItem(itemID) >= count then
+        sendPacket(2, "action|drop\nitemID|" .. itemID)
+        sleep(500)
+        sendPacket(2,"action|dialog_return\ndialog_name|drop_item\nitemID|" .. itemID .. "|\ncount|" .. count)
+        sleep(1000)
+    end
+end
+
+function TrashTheJunks()
+    for i, trash in ipairs(SubSetting.TrashList) do
+        if findItem(trash) > 0 then
+    sendPacket(2, "action|trash\n|itemID|" .. trash)
+    sleep(2000)
+    sendPacket(2, "action|dialog_return\ndialog_name|trash_item\nitemID|" .. trash .. "|\ncount|" .. findItem(trash))
+    sleep(2000)
+        end
+    end
+    TrashJunks = {2, 14}
+    for i, trash in ipairs(TrashJunks) do
+        if findItem(trash) > 195 then
+            sendPacket(2, "action|trash\n|itemID|" .. trash)
+            sleep(2000)
+            sendPacket(2, "action|dialog_return\ndialog_name|trash_item\nitemID|" .. trash .. "|\ncount|" .. 10)
+            sleep(2000)
+        end
+    end
+end
+
+function Reconnect()
+    if getBot().status ~= "online" then
+        webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : Bot Is Offline Trying To Reconnect.... \n<:red_circle:987661002868936774> | Status : Offline")
+        while getBot().status ~= "online" do
+            connect()
+            sleep(15000)
+        end
+        webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : Bot Is Back Online\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+    end
+end
+
+function MoveWhenInWhiteDoor()
+    while getTile(math.floor(getBot().x/32),math.floor(getBot().y/32)).fg == 6 do
+        move(3,0)
+        sleep(500)
+        move(1,0)
+        sleep(500)
+        if getTile(math.floor(getBot().x/32),math.floor(getBot().y/32)).fg == 0 then 
+            break
+        end
+    end
+end
+
+
+
+function ClearTheSide()
+
+    webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information :  Starting Clear The Side Of The World \n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+    for i=24,53 do  
+        if getTile(1,i).bg == 14 or getTile(1,i).fg == 2 or getTile(0,i).bg == 14 or getTile(0,i).fg == 2 then
+            while getTile(1,i).bg == 14 or getTile(1,i).fg == 2 do
+                Reconnect()
+                MoveWhenInWhiteDoor()
+                findPath(1,i-1)
+                punch(0,1)
+                sleep(172)
+                if getTile(1,i).bg == 0 then
+                    collect(2)
+                end
+                TrashTheJunks()
+            end
+            while getTile(0,i).bg == 14 or getTile(0,i).fg == 2 do
+                Reconnect()
+                MoveWhenInWhiteDoor()
+                findPath(1,i-1)
+                punch(-1,1)
+                sleep(172)
+                if getTile(1,i).bg == 0 then
+                    collect(2)
+                end
+                TrashTheJunks()
+            end
+            
+            if findItem(3) > 150 then
+                webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : Dirt Seeds Is More Than 150... Saving Dirt Seeds In "..worlds.Save_Seed_World .. "\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+                SaveTheDirtSeeds()
+                sleep(250)
+                webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : "..getBot().name.." Is Going To Clear The Sides Of The World Named "..getBot().world.."\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+            elseif findItem(5) > 150 then
+                if SaveSettings.SaveLava == true then
+                    webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : Lava Seeds Is More Than 150... Saving Lava Seeds In "..worlds.Save_Seed_World .. "\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+                else
+                    webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : Lava Seeds Is More Than 150... Trashing Lava Seeds\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+                end
+                
+                SaveTheLavaSeeds()
+                sleep(250)
+                webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : "..getBot().name.." Is Going To Clear The Sides Of The World Named "..getBot().world.."\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+            elseif findItem(15) > 150 then
+                if SaveSettings.SaveCaveBackgrounds == true then
+                    webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : Cave Background Seeds Is More Than 150... Saving Cave Background Seeds In "..worlds.Save_Seed_World .. "\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+                else
+                    webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : Cave Background Seeds Is More Than 150... Trashing Cave Background Seeds \n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."") 
+                end
+                SaveTheCaveBackgroundSeeds()
+                sleep(250)
+                webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : "..getBot().name.." Is Going To Clear The Sides Of The World Named "..getBot().world.."\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+            elseif findItem(11) > 150 then
+                if SaveSettings.SaveRock == true then
+                    webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : Rock Seeds Is More Than 150... Saving Rock Seeds In "..worlds.Save_Seed_World .. "\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+                else
+                    webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : Rock Seeds Is More Than 150... Trashing Rock Seeds\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+                end
+                
+                SaveTheRockSeeds()
+                sleep(250)
+                webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : "..getBot().name.." Is Going To Clear The Sides Of The World Named "..getBot().world.."\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+            end
+        end
+    end
+    for i=24,53 do
+        if getTile(98,i).bg == 14 or getTile(98,i).fg == 2 or getTile(99,i).bg == 14 or getTile(99,i).fg == 2 then
+            while getTile(98,i).bg == 14 or getTile(98,i).fg == 2 do
+                Reconnect()
+                MoveWhenInWhiteDoor()
+                findPath(98,i-1)
+                sleep(190)
+                punch(0,1)
+                sleep(190)
+                if getTile(1,i).bg == 0 then
+                    collect(2)
+                    Reconnect()
+                end
+                TrashTheJunks()
+            end
+            while getTile(99,i).bg == 14 or getTile(99,i).fg == 2 do
+                Reconnect()
+                MoveWhenInWhiteDoor()
+                findPath(98,i-1)
+                sleep(190)
+                punch(1,1)
+                sleep(190)
+                if getTile(1,i).bg == 0 then
+                    collect(2)
+                end
+                TrashTheJunks()
+            end
+            if findItem(3) > 150 then
+                webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : Dirt Seeds Is More Than 150... Saving Dirt Seeds In "..worlds.Save_Seed_World .. "\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+                SaveTheDirtSeeds()
+            elseif findItem(5) > 150 then
+                if SaveSettings.SaveLava == true then
+                    webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : Lava Seeds Is More Than 150... Saving Lava Seeds In "..worlds.Save_Seed_World .. "\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+                else
+                    webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : Lava Seeds Is More Than 150... Trashing Lava Seeds\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+                end
+                SaveTheLavaSeeds()
+            elseif findItem(15) > 150 then
+                if SaveSettings.SaveCaveBackgrounds == true then
+                    webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : Cave Background Seeds Is More Than 150... Saving Cave Background Seeds In "..worlds.Save_Seed_World .. "\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+                else
+                    webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : Cave Background Seeds Is More Than 150... Trashing Cave Background Seeds \n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."") 
+                end
+                SaveTheCaveBackgroundSeeds()
+            elseif findItem(11) > 150 then
+                if SaveSettings.SaveRock == true then
+                    webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : Rock Seeds Is More Than 150... Saving Rock Seeds In "..worlds.Save_Seed_World .. "\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+                else
+                    webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : Rock Seeds Is More Than 150... Trashing Rock Seeds\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+                end
+                SaveTheRockSeeds()
+            end
+        end
+    end
+end
+function TakeWL()
+    local CurrentWorld = getBot().world
+    if findItem(242) < 1 then
+        sendPacket(3,"action|join_request\nname|" ..worlds.StoragePlatform.."\ninvitedWorld|0")
+        sleep(5000)
+        sendPacket(3,"action|join_request\nname|" ..worlds.StoragePlatform.. "|" ..worlds.StoragePlatformID.."\ninvitedWorld|0")
+        sleep(4500)
+        collect(2)
+        sleep(4500)
+        sendPacket(3,"action|join_request\nname|" ..CurrentWorld.."\ninvitedWorld|0")
+        sleep(5000)
+        move(2,0)
+        sleep(500)
+        move(1,0)
+        sleep(200)
+    end
+end
+function TakeAndPlacePlatform()
+    webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : Bot Is Going To Take Platform In "..StoragePlatform.." Then Placing It In "..getBot().world.."\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+    local CurrentWorld = getBot().world
+    if findItem(SubSetting.Platfoms_ID) < 52 then
+        sendPacket(3,"action|join_request\nname|" ..worlds.StoragePlatform.."\ninvitedWorld|0")
+        sleep(5000)
+        sendPacket(3,"action|join_request\nname|" ..worlds.StoragePlatform.. "|" ..worlds.StoragePlatformID.."\ninvitedWorld|0")
+        sleep(4500)
+        collect(2)
+        sleep(4500)
+        if findItem(SubSetting.Platfoms_ID) > 104 then
+            move(-1,0)
+            DropTheItems(SubSetting.Platfoms_ID,findItem(SubSetting.Platfoms_ID) - 104)
+        end
+        sendPacket(3,"action|join_request\nname|" ..CurrentWorld.."\ninvitedWorld|0")
+        sleep(5000)
+        move(2,0)
+        sleep(500)
+        move(1,0)
+        sleep(200)
+    end
+    for i = 2, 52, 2 do
+        while getTile(1,i).fg == 0 do
+            if findItem(SubSetting.Platfoms_ID) == 0 then
+                break
+            end
+            findPath(1,i-1)
+            place(SubSetting.Platfoms_ID,0,1)
+            sleep(190)
+        end
+    end
+    for i = 2, 52, 2 do
+        while getTile(98,i).fg == 0 do
+            if findItem(SubSetting.Platfoms_ID) == 0 then
+                break
+            end
+            findPath(98,i-1)
+            place(SubSetting.Platfoms_ID,0,1)
+            sleep(190)
+        end
+    end
+end
+
+function ClearingDirts()
+    MoveWhenInWhiteDoor()
+    webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information :  Going To Clear The Dirts To Make A Layer\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+    for i = 1, 54, 2 do
+        for j = 2,97 do
+            if getTile(j,i).bg == 14 then
+                while getTile(j,i).bg == 14 do
+                    Reconnect()
+                    findPath(j-1,i)
+                    punch(1,0)
+                    sleep(172)
+                    if getTile(j,i).bg == 0 or getTile(j,i+1).fg == 0 then 
+                        collect(3)
+                    end
+                    TrashTheJunks()
+                end
+                if findItem(3) > 150 then
+                    webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : Dirt Seeds Is More Than 150... Saving Dirt Seeds In "..worlds.Save_Seed_World .. "\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+                    SaveTheDirtSeeds()
+                    sleep(250)
+                    webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : "..getBot().name.." Is Going To Clear The Dirts To Make A Layer In "..getBot().world.."\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+                elseif findItem(5) > 150 then
+                    if SaveSettings.SaveLava == true then
+                        webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : Lava Seeds Is More Than 150... Saving Lava Seeds In "..worlds.Save_Seed_World .. "\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+                    else
+                        webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : Lava Seeds Is More Than 150... Trashing Lava Seeds\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+                    end
+                    SaveTheLavaSeeds()
+                    sleep(250)
+                    webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : "..getBot().name.." Is Going To Clear The Dirts To Make A Layer In "..getBot().world.."\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+                elseif findItem(15) > 150 then
+                    if SaveSettings.SaveCaveBackgrounds == true then
+                        webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : Cave Background Seeds Is More Than 150... Saving Cave Background Seeds In "..worlds.Save_Seed_World .. "\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+                    else
+                        webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : Cave Background Seeds Is More Than 150... Trashing Cave Background Seeds \n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."") 
+                    end
+                    
+                    SaveTheCaveBackgroundSeeds()
+                    sleep(250)
+                    webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : "..getBot().name.." Is Going To Clear The Dirts To Make A Layer In "..getBot().world.."\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+                elseif findItem(11) > 150 then
+                    if SaveSettings.SaveRock == true then
+                        webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : Rock Seeds Is More Than 150... Saving Rock Seeds In "..worlds.Save_Seed_World .. "\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+                    else
+                        webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : Rock Seeds Is More Than 150... Trashing Rock Seeds\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+                    end
+                    SaveTheRockSeeds()
+                    sleep(250)
+                    webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : "..getBot().name.." Is Going To Clear The Dirts To Make A Layer In "..getBot().world.."\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+                end
+            end
+        end
+    end
+end
+
+function ClearTheRocks()
+    webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information :  Going To Clear All The Rocks \n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+    if Main.BreakTheRock == true then
+    for _, tile in pairs(getTiles()) do
+        while tile.fg == 10 do
+            Reconnect()
+            findPath(tile.x,tile.y-1)
+                punch(0,1)
+                sleep(172)
+                if getTile(tile.x,tile.y).fg == 0 then
+                    collect(2)
+                    break
+                end
+                if findItem(11) > 150 then
+                    webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : Rock Seeds Is More Than 150... Saving Rock Seeds In "..worlds.Save_Seed_World .. "\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+                    SaveTheRockSeeds()
+                    sleep(250)
+                    webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : "..getBot().name.." Is Going To Clear All The Rocks At "..getBot().world.."\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+                end
+                TrashTheJunks()
+            end
+        end
+    end
+end
+
+function ClearTheLavas()
+    webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : Going To Clear All The Lava  \n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+    for _, tile in pairs(getTiles()) do
+        while tile.fg == 4 do
+            Reconnect()
+            findPath(tile.x,tile.y-1)
+            punch(0,1)
+            sleep(172)
+            if getTile(tile.x,tile.y).fg == 0 then
+                collect(2)
+                break
+            end
+            if findItem(5) > 150 then
+                webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : Lava Seeds Is More Than 150... Saving Lava Seeds In "..worlds.Save_Seed_World .. "\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+                SaveTheLavaSeeds()
+                sleep(250)
+                webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information :  Going To Clear All The Lava \n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."")
+            end
+            TrashTheJunks()
+        end
+    end
+end
+
+function SaveTheDirtSeeds()
+    if SaveSettings.SaveDirt == true then 
+        local CurrentWorld = getBot().world 
+        if findItem(3) > 150 then 
+            sleep(1500)
+            sendPacket(3,"action|join_request\nname|".. worlds.Save_Seed_World.."\ninvitedWorld|0")
+            sleep(5000)
+            sendPacket(3,"action|join_request\nname|".. worlds.Save_Seed_World .. "|" .. worlds.Save_Seed_DoorID.."\ninvitedWorld|0")
+            sleep(4500)
+        end
+        for _, tile in pairs(getTiles()) do 
+            if tile.fg == BGForDirt or tile.bg == BGForDirt then 
+                sleep(500)
+                findPath(tile.x, tile.y)
+                sleep(800)
+            end
+        end
+        while findItem(3) > 100 do 
+            drop(3)
+            sleep(1500)
+            move(-1,0)
+            sleep(500)
+        end
+        if findItem(3) < 150 then
+            webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : Done Dropping Dirt Seeds... Total Dirt Seeds Dropped ".. SeedsScanner(3) .."\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+            sleep(1500)
+            sendPacket(3,"action|join_request\nname|".. CurrentWorld.."\ninvitedWorld|0")
+            sleep(5000)
+        end
+        move(2,0)
+        sleep(500)
+        move(1,0)
+        sleep(500)
+    else
+        sleep(2000)
+        sendPacket(2, "action|trash\n|itemID|" .. 3)
+        sleep(2000)
+        sendPacket(2, "action|dialog_return\ndialog_name|trash_item\nitemID|" .. 3 .. "|\ncount|" .. findItem(3))
+        sleep(2000)
+    end
+end
+
+function SaveTheCaveBackgroundSeeds()
+    if SaveSettings.SaveCaveBackgrounds == true then 
+        local CurrentWorld = getBot().world 
+        if findItem(15) > 150 then 
+            sleep(1500)
+            sendPacket(3,"action|join_request\nname|".. worlds.Save_Seed_World.."\ninvitedWorld|0")
+            sleep(5000)
+            sendPacket(3,"action|join_request\nname|".. worlds.Save_Seed_World .. "|" .. worlds.Save_Seed_DoorID.."\ninvitedWorld|0")
+            sleep(4500)
+        end
+        for _, tile in pairs(getTiles()) do 
+            if tile.fg == BGForCaveBackground or tile.bg == BGForCaveBackground then 
+                sleep(500)
+                findPath(tile.x, tile.y)
+                sleep(800)
+            end
+        end
+        while findItem(15) > 100 do 
+            drop(15)
+            sleep(1500)
+            move(-1,0)
+            sleep(500)
+        end
+        if findItem(15) < 150 then
+            webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : Done Dropping Cave Background Seeds... Total Cave Background Seeds Dropped ".. SeedsScanner(15) .."\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+            sleep(1500)
+            sendPacket(3,"action|join_request\nname|".. CurrentWorld.."\ninvitedWorld|0")
+            sleep(5000)
+        end
+        move(2,0)
+        sleep(500)
+        move(1,0)
+        sleep(500)
+    else
+        sleep(2000)
+        sendPacket(2, "action|trash\n|itemID|" .. 15)
+        sleep(2000)
+        sendPacket(2, "action|dialog_return\ndialog_name|trash_item\nitemID|" .. 15 .. "|\ncount|" .. findItem(15))
+        sleep(2000)
+    end
+end
+
+function SaveTheRockSeeds()
+    if SaveSettings.SaveRock == true then 
+        local CurrentWorld = getBot().world
+        if findItem(11) > 150 then 
+            sleep(1500)
+            sendPacket(3,"action|join_request\nname|".. worlds.Save_Seed_World.."\ninvitedWorld|0")
+            sleep(5000)
+            sendPacket(3,"action|join_request\nname|".. worlds.Save_Seed_World .. "|" .. worlds.Save_Seed_DoorID.."\ninvitedWorld|0")
+            sleep(4500)
+        end
+        for _, tile in pairs(getTiles()) do 
+            if tile.fg == BGForRock or tile.bg == BGForRock then 
+                sleep(500)
+                findPath(tile.x, tile.y)
+                sleep(800)
+            end
+        end
+        while findItem(11) > 100 do 
+            drop(11)
+            sleep(1500)
+            move(-1,0)
+            sleep(500)
+        end
+        if findItem(11) < 150 then
+            webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : Done Dropping Rock Seeds... Total Rock Seeds Dropped ".. SeedsScanner(11) .."\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+            sleep(1500)
+            sendPacket(3,"action|join_request\nname|".. CurrentWorld.."\ninvitedWorld|0")
+            sleep(5000)
+        end
+        move(2,0)
+        sleep(500)
+        move(1,0)
+        sleep(500)
+    else
+        sleep(2000)
+        sendPacket(2, "action|trash\n|itemID|" .. 11)
+        sleep(2000)
+        sendPacket(2, "action|dialog_return\ndialog_name|trash_item\nitemID|" .. 11 .. "|\ncount|" .. findItem(11))
+        sleep(2000)
+    end
+end
+
+function SaveTheLavaSeeds()
+    if SaveSettings.SaveLava == true then 
+        local CurrentWorld = getBot().world
+        if findItem(5) > 150 then 
+            sleep(1500)
+            sendPacket(3,"action|join_request\nname|".. worlds.Save_Seed_World.."\ninvitedWorld|0")
+            sleep(5000)
+            sendPacket(3,"action|join_request\nname|".. worlds.Save_Seed_World .. "|" .. worlds.Save_Seed_DoorID.."\ninvitedWorld|0")
+            sleep(4500)
+        end
+        for _, tile in pairs(getTiles()) do 
+            if tile.fg == BGForLava or tile.bg == BGForLava then 
+                sleep(500)
+                findPath(tile.x, tile.y)
+                sleep(800)
+            end
+        end
+        while findItem(5) > 100 do
+            drop(5) 
+            sleep(1500)
+            move(-1,0)
+            sleep(500)
+        end
+        if findItem(5) < 150 then
+            webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : Done Dropping Lava Seeds... Total Lava Seeds Dropped ".. SeedsScanner(5) .."\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+            sleep(1500)
+            sendPacket(3,"action|join_request\nname|".. CurrentWorld.."\ninvitedWorld|0")
+            sleep(5000)
+        end
+        move(2,0)
+        sleep(500)
+        move(1,0)
+        sleep(500)
+    else
+        sleep(2000)
+        sendPacket(2, "action|trash\n|itemID|" .. 5)
+        sleep(2000)
+        sendPacket(2, "action|dialog_return\ndialog_name|trash_item\nitemID|" .. 5 .. "|\ncount|" .. findItem(5))
+        sleep(2000)
+    end
+end
+
+function GetDirtSeeds()
+    local CurrentWorld = getBot().world
+    if findItem(3) == 0 then
+        sleep(1500)
+        sendPacket(3,"action|join_request\nname|".. worlds.Save_Seed_World.."\ninvitedWorld|0")
+        sleep(5000)
+        sendPacket(3,"action|join_request\nname|".. worlds.Save_Seed_World .. "|" .. worlds.Save_Seed_DoorID.."\ninvitedWorld|0")
+        sleep(4500)
+        for _, floating in pairs(getObjects()) do 
+            if floating.id == 3 then 
+                findPath((floating.x+10) / 32, (floating.y+10) / 32)
+                sleep(800)
+                collect(2)
+                sleep(1500)
+            end
+        end
+        if findItem(3) > 1 then
+            webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : Dirt Seeds Is More Than 1... Going Back On Creating Dirt Farms For You My Master.\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+            sleep(1500)
+            sendPacket(3,"action|join_request\nname|".. CurrentWorld.."\ninvitedWorld|0")
+            sleep(5000)
+        end
+        move(2,0)
+        sleep(500)
+        move(1,0)
+        sleep(500)
+    end
+end
+
+function PlantAndHarvestDirt()
+    while findItem(2) == 0 do
+        for x = 2, 22  do
+            if findItem(2) == 200 then 
+                break
+            end
+            if findItem(3) == 0 then
+                webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : Dirt Seeds Is 0... Taking Dirt Seeds In "..worlds.Save_Seed_World .. "\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."")
+                GetDirtSeeds()
+                sleep(250)
+                webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : Going To Place Dirts To Make A Layer \n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+            end
+            while getTile(x, 21).ready do
+                findPath(x, 21)
+                punch(0, 0)
+                sleep(155)
+                collect(2)
+            end
+            while getTile(x, 21).fg == 0 and findItem(3) > 0 do
+                findPath(x, 21)
+                place(3, 0, 0)
+                sleep(90)
+            end
+            Reconnect()
+        end
+    end
+end
+
+function PlaceTheDirts()
+    webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information :  Going To Place Dirts To Make A Layer  \n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+    for y = 52, 2, -2 do
+        for x = 2, 97 do
+            if getTile(x, y).fg == 0 then
+                PlantAndHarvestDirt()
+                findPath(x, y - 1)
+                while getTile(x, y).fg == 0 and findItem(2) > 0 do
+                    place(2, 0, 1)
+                    sleep(190)
+                end
+                Reconnect()
+            end
+        end
+    end
+end
+
+
+function DirtFarmDone()
+    dfcount = dfcount + 1
+    for x = 2, 22  do
+        while getTile(x,21).fg == 3 do
+            findPath(x,21)
+            punch(0,0)
+            sleep(190)
+            TrashTheJunks()
+            if getTile(x,21).fg == 0 then
+                collect(2)
+                sleep(40)
+            end 
+            Reconnect()
+        end
+    end
+end
+
+function BreakTheSignalJammer()
+    if Main.BreakJammer == true then
+        for _,t in pairs(getTiles()) do
+            if t.fg == 226 then
+              findPath(t.x, t.y-1)
+              sleep(250)
+              while getTile(t.x, t.y).fg ~= 0 or getTile(t.x, t.y).bg ~= 0 do
+                punch(0,1)
+                sleep(125)
+              end
+              sleep(250)
+              place(2,0,1)
+            end
+        end
+    end
+    if dfcount == Main.DirtFarm then
+        startdf = false
+    else
+        Main.Auto_Find_world = true
+    end
+    
+end
+
+function NeedsToGenerateAWorld()
+    if GenerateRandomWorld == 1 then
+        webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : Finding "..Main.WorldLetters.." Letter World Please Wait.\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."") 
+        GenerateAWorld()
+        sleep(300)
+        PutWlAndJammer()
+    end
+
+    if GenerateRandomWorld == 1 then
+        LogTheName("World : "..getBot().world) 
+        sleep(300)
+        webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : "..Main.WorldLetters.." Letter World Found \n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+        sleep(500)
+    end
+end
+
+
+while startdf do
+    if findItem(242) < 1 and Main.useWL == true then
+        TakeWL()
+    end
+    if Main.Auto_Find_world == true then
+        NeedsToGenerateAWorld()
+    end
+    MoveWhenInWhiteDoor()
+    ClearTheSide()
+    MoveWhenInWhiteDoor()
+    TakeAndPlacePlatform()
+    MoveWhenInWhiteDoor()
+    ClearingDirts()
+    if Main.BreakTheRock == true then
+    ClearTheRocks()
+    end
+ClearTheLavas()
+PlaceTheDirts()
+webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information :  Harvesting The Extra Dirt Tree \n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+DirtFarmDone()
+webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information :  Going To Break The Jammer So He Can Still Use It On The Next World\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+BreakTheSignalJammer()
+webhuk("<:Bot:1035169530143576145> | Bot : "..getBot().name.."\n<:mega:984686541383290940> | Information : "..getBot().name.." Says That The World "..getBot().world.." is Done\n<:green_circle:984666691927691274> | Status : Online\n<:globe_with_meridians:984683698123337828> | Current World : "..getBot().world.."\n===========================\n**Bot Backpack**\n<:ladder:1031872064400916530> | Platforms Remain : "..findItem(SubSetting.Platfoms_ID).."\n<:wl:1034385539853463563> | WorldLock Remain : "..findItem(242).."")
+end
