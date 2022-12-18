@@ -1,0 +1,122 @@
+
+local charset = {"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"}  do -- [0-9a-zA-Z]
+  for c = 48, 57  do table.insert(charset, string.char(c)) end
+  for c = 65, 90  do table.insert(charset, string.char(c)) end
+  for c = 97, 122 do table.insert(charset, string.char(c)) end
+end
+
+local function randomString(length)
+  if not length or length <= 0 then return '' end
+  return randomString(length - 1) .. charset[math.random(1, #charset)]
+end
+
+function w(text)
+file = io.open("acc.txt", "a")
+file:write(text.."\n")
+file:close()
+end
+function BD()
+  for i=0,4,1 do
+    punch(1,0)
+    sleep(300)
+  end
+end
+function randomEmail()
+  for i = 1,8 do
+    main.email = main.email..string.char(math.random(97,122))
+  end
+end
+function cid()
+  if settings.randomEmail == true then
+    randomEmail()
+  end
+  setBool("Guest Account",true)
+  addBot("","")
+  while getBot().status ~= "online" do
+    sleep(5000)
+    connect()
+  end
+  while getBot().world == "EXIT" do
+    sleep(5000)
+  end
+  sleep(5000)
+  sendPacket(2,"ftue_start_popup_close")
+  if settings.skipTutor == true then
+  sleep(1500)
+  findPath(86,30)
+  sleep(1800)
+  enter()
+  sleep(5000)
+  findPath(46,23)
+  sleep(2000)
+  BD()
+  place(2,1,0)
+  sleep(600)
+  BD()
+  collect(3)
+  sleep(1240)
+  place(3,1,0)
+  sleep(2000)
+  place(10672,1,0)
+  sleep(1300)
+  punch(1,0)
+  sleep(1200)
+  move(1,0)
+  collect(2)
+  sleep(2000)
+  wear(48)
+  end
+  sleep(3000)
+  sendPacket(3,"action|quit_to_exit")
+  sleep(2000)
+  totTxt = ""
+  for i = 1,18 do
+    totTxt = totTxt..string.char(math.random(97,122))
+  end
+  sendPacket(3, "action|join_request\nname|" .. totTxt.."\ninvitedWorld|0")
+  if settings.skipTutor == true then
+  sleep(5000)
+  place(9640,0,-1)
+  end
+  sleep(1200)
+  local names = ""
+  if settings.randomUser == true then
+    names = randomString(main.namelength)
+  else
+      names = main.user ..count + 1
+  end
+  sleep(3000)
+  sendPacket(2,"action|growid")
+  sleep(12000)
+  sendPacket(2, "action|dialog_return\ndialog_name|growid_apply\nlogon|"..names.."\npassword|"..main.password.."\npassword_verify|"..main.password.."\nemail|"..main.email..main.domain)
+  sleep(5000)
+  table.insert(aap, names)
+  w("name acc = "..names)
+  w("email acc = "..main.email..main.domain)
+  w("password acc = "..main.password)
+end
+
+function sendAAP()
+for i, x in ipairs(aap) do
+  setBool("Guest Account",false)
+  addBot(aap[i],main.password)
+  while getBot().status ~= "online" do
+    sleep(5000)
+    connect()
+  end
+  sleep(5000)
+  removeBot(getBot().name)
+end
+end
+
+repeat
+  sleep(1000)
+  cid()
+  sleep(1000)
+  removeBot(getBot().name)
+  sleep(1000)
+  count = count + 1
+  if count == settings.createid and settings.AutoSendAAP == true or count >= settings.createid and settings.AutoSendAAP == true then
+    sendAAP()
+  end
+until count == settings.createid or count >= settings.createid
