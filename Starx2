@@ -1,0 +1,527 @@
+
+if Custom.language == "ID" then
+ MSG = {
+  start = "Memulai Script",
+  recon = "Bot Offline mencoba mengkoneksikan ulang",
+  online = "Bot Kembali Online",
+  pnb = "Memulai pnb",
+  harvest = "Bot sedang memanen",
+  plant = "Bot sedang menanam benih ",
+  buypack = "Membeli pack",
+  seedDrop = "Bot sedang menyimpan seed di Save World",
+  over = "rotasi selesai, Bot sudah di hapus",
+  finishw = "Lahan selesai menuju ke lahan selanjutnya",
+  info = "Bot Kembali ke lahan pertama"
+ }
+elseif Custom.language == "EN"  then
+  MSG = {
+    start = "Starting Script",
+    recon = "Bot Is Offline Trying To Reconnect",
+    online = "Bot Is Back Online",
+    pnb = "Starting pnb",
+    harvest = "Bot Is going Harvest Tree",
+    plant = "Bot Is going Plant Tree",
+    buypack = "Buying Pack Please Wait",
+    seedDrop = "Bot Is Going Drop Seed In Save World",
+    over = "The worlds are over, the bot has been removed",
+    finishw = "Finished The World and Going To next World",
+    info = "Bot Returns to world 1"
+   }
+else
+  MSG = {
+    start = "Starting Script",
+    recon = "Bot Is Offline Trying To Reconnect",
+    online = "Bot Is Back Online",
+    pnb = "Starting pnb",
+    harvest = "Bot Is going Harvest Tree",
+    plant = "Bot Is going Plant Tree",
+    buypack = "Buying Pack Please Wait",
+    seedDrop = "Bot Is Going Drop Seed In Save World",
+    over = "The worlds are over, the bot has been removed",
+    finishw = "Finished The World and Going To next World",
+    info = "Bot Returns to world 1"
+   }
+end
+
+
+botname = getBot().name   
+worldwhile = true
+
+if PackName == "ssp_10_pack" then
+  packgems = 1000              --pack gems
+  packitemid = {5706}  --pack item id like world lock 242
+elseif PackName == "surg_value_pack" then
+  packgems = 45000
+  packitemid = {1270,4316,4310,1258,4312,4318,4308,1260,1268,4314,1264,1266,1262,4296}
+elseif PackName == "star_supplies" then
+  packgems = 15000
+  packitemid = {6416,6520,6538,6522,6528,6540,6518,6530,6524,6536,6534,6532,6526}
+elseif PackName == "vending_machine" then
+  packgems = 8000
+  packitemid = {2978}
+end
+
+function check()
+  local n=0
+  for i = 1, #worlds do
+  n=n+1
+  end
+  return n
+end
+
+function webhuk(Logs)
+  local script = [[
+      $webHookUrl = "]].. Webhook ..[["
+      $cpu = (Get-WmiObject win32_processor | Measure-Object -property LoadPercentage -Average | Select Average).Average
+      [System.Collections.ArrayList]$embedArray = @()
+  $thumbnailObject = [PSCustomObject]@{
+      url = "https://cdn.discordapp.com/attachments/1031531937904467969/1031532036445454437/1213984.jpg"
+  }
+  $color = Get-Random -Minimum 0 -Maximum 16777215
+  $title = 'Staryuu Rotation Beta'
+  $description = "]].. Logs..[["
+
+  $footer = [PSCustomObject]@{
+      icon_url = "https://cdn.discordapp.com/attachments/1031531937904467969/1031532036445454437/1213984.jpg"
+      text = "]].."Staryuu#4909 | Date : "..(os.date"%d/%m/%y":upper().." Time : ")..os.date("%I")..":"..os.date("%M").." "..os.date("%p"):upper()..[["
+  }
+
+
+  $embedObject = [PSCustomObject]@{
+      color = $color
+      title = $title
+      description = $description
+      thumbnail = $thumbnailObject
+      footer = $footer
+  }
+
+  [System.Collections.ArrayList]$embedArray = @()
+  $embedArray.Add($embedObject)
+
+  $payload = [PSCustomObject]@{
+      embeds = $embedArray
+  }
+  [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+  Invoke-RestMethod -Uri $webHookUrl -Body ($payload | ConvertTo-Json -Depth 4) -Method Post -ContentType 'application/json'
+  ]]
+
+  local pipe = io.popen("powershell -command -", "w")
+  pipe:write(script)
+  pipe:close()
+end
+
+if seedId == 4585 then
+  hit = 3
+elseif seedId == 3005 then
+  hit = 3
+elseif seedId == 341  then
+  hit = 6
+elseif seedId == 5667 then
+  hit = 4
+end
+
+local seedDroped = 0
+
+local x = os.clock()
+
+bought = 0
+
+
+
+
+function getUptime(waktu)
+  local time_d, time_h, time_m, time_s
+  if type(waktu) == "string" then tonumber(waktu) end
+  if type(waktu) ~= "number" then return end
+
+  time_d = math.floor(waktu / (3600 * 24))
+  time_h = math.floor((waktu % (3600 * 24)) / 3600)
+  time_m = math.floor(((waktu % (3600 * 24)) % 3600) / 60)
+  time_s = math.floor(((waktu % (3600 * 24)) % 3600) % 60)
+
+  return string.format("Hari: %d Jam: %d Menit: %d Detik: %d", time_d, time_h, time_m, time_s)
+end
+
+
+function main(Amount)
+  for i=1, Amount do
+    local function dropItem(itemid, amount)
+      if findItem(itemid) >= amount then
+          sendPacket(2,"action|drop\nitemID|"..itemid)
+          sleep(1000)
+          sendPacket(2,"action|dialog_return\ndialog_name|drop_item\nitemID|"..itemid.."|\ncount|"..amount)
+          sleep(500)
+      end
+    end
+   
+
+    trashList = {5040,5042,5044,5032,5034,5036,5038,5024,5026,5028,5030}
+    local function trasher()
+        for a, trash in ipairs(trashList) do
+            if findItem(trash) > 100 then
+                sendPacket(2, "action|trash\n|itemID|"..trash)
+                sleep(1500)
+                sendPacket(2, "action|dialog_return\ndialog_name|trash_item\nitemID|"..trash.."|\ncount|"..findItem(trash))
+                sleep(3000)
+            end
+        end
+    end
+
+
+    local function scanseed(id)
+      local m=0
+      for _,object in pairs(getObjects()) do
+          if object.id==id then m=m + object.count end
+      end
+      return m
+    end
+
+
+    local function joinworld(totTxt,door)
+      sendPacket(3,"action|join_request\nname|" .. totTxt.."|"..door.."\ninvitedWorld|0")
+      sleep(15000)
+      say("Script Running")
+      sleep(2000)
+      move(-3,0)
+      sleep(5000)
+    end
+    local function joindropworld(totTxt,Worldid)
+      sendPacket(3,"action|join_request\nname|" .. totTxt.."|"..Worldid.."\ninvitedWorld|0")
+      sleep(15000)
+      sendPacket(3,"action|join_request\nname|" .. totTxt.."|"..Worldid.."\ninvitedWorld|0")
+      sleep(5000)
+    end
+
+    local function pnb()
+       while findItem(seedId-1) > 0 do
+        if findItem(seedId) > 150 then
+          webhuk("<:Bot:1035169530143576145> | Bot : ||"..getBot().name.."||\n<:mega:984686541383290940> | Information : "..MSG.seedDrop.."\n<:green_circle:984666691927691274> | Status : "..getBot().status.."\n<:globe_with_meridians:984683698123337828> | Current World : ||"..getBot().world.."||\n<:level:1042053001348644914> | Level : "..getBot().level.."\n===========================\n**Bot Backpack**\n <:gems:1038773949439414282>| gems: "..findItem(112).."\n===========================\n**ScriptInfo**\n <:clock00:1041990960416034856>| Uptime:\n "..getUptime(os.clock() - x).."")
+          sleep(2500)
+          drop("seeddrop")
+          sleep(2500)
+        end
+           place(seedId-1,-1,0)
+           sleep(settings.delayPut)
+           place(seedId-1,-2,0)
+           sleep(settings.delayPut)
+           for i = 0,hit,1 do
+               punch(-1,0)
+               sleep(settings.delaybreak)
+               punch(-2,0)
+               sleep(settings.delaybreak)
+               collect(5)
+           end
+       end
+   end
+    local function plant()
+      for i=1,5 do
+          for _, tile in pairs(getTiles()) do
+              if tile.fg ~= 0 and tile.y >1 and findItem(seedId) > 0 and getTile(tile.x, tile.y -1).fg == 0 and getTile(tile.x, tile.y).fg ~= seedId and getTile(tile.x, tile.y).fg ~= seedId-1 and getTile(tile.x-2, tile.y -1).fg ~= 6 and getTile(tile.x+2, tile.y -1).fg ~= 6 then
+                  findPath(tile.x, tile.y-1)
+                  sleep(settings.delayplant)
+                  place(seedId, 0, 0)
+                  sleep(settings.delayplant)
+              end
+          end
+      end
+  end
+    function checkReadyTree(itemid)
+      local count = 0
+      for _, tile in pairs(getTiles()) do
+        if tile.fg == itemid and getTile(tile.x, tile.y).ready then
+          count = count + 1
+        end
+      end
+      return count
+    end
+    local function drop(value)
+      sleep(2000)
+      trasher()
+      sleep(2000)
+      if value == "seeddrop" then
+        joindropworld(storage.Storage_seed_world,storage.Storage_seed_WordID)
+      elseif value == "packetss" then
+        joindropworld(storage.Storage_pack_world,storage.Storage_Pack_WordID)
+      end
+      sleep(200)
+      for _, tile in pairs(getTiles()) do
+        if tile.fg == 1422 then
+          if getBot().status ~= "online" then
+            webhuk("<:Bot:1035169530143576145> | Bot : ||"..getBot().name.."||\n<:mega:984686541383290940> | Information : "..MSG.recon.."\n<:red_circle:987661002868936774> | Status : "..getBot().status.."")
+            sleep(10000)
+            while getBot().status ~= "online" do
+              connect()
+              sleep(5000)
+            webhuk("<:Bot:1035169530143576145> | Bot : ||"..getBot().name.."||\n<:mega:984686541383290940> | Information : "..MSG.online.."\n<:green_circle:984666691927691274> | Status : "..getBot().status.."\n<:globe_with_meridians:984683698123337828> | Current World : ||"..getBot().world.."||\n<:level:1042053001348644914> | Level : "..getBot().level.."\n===========================\n**Bot Backpack**\n <:gems:1038773949439414282>| gems: "..findItem(112).."\n===========================\n**ScriptInfo**\n <:clock00:1041990960416034856>| Uptime:\n "..getUptime(os.clock() - x).."") 
+          end
+            sleep(10000)
+            joinworld(worlds[i],DoorID)
+            sleep(5000)
+            findPath(tile.x-1,tile.y)
+            sleep(1000)
+          end
+          if value == "packetss" then
+            if findItem(112) >= packgems then
+              while findItem(112) >= packgems  do
+                sendPacket(2,"action|buy\nitem|itempack")
+                sleep(500)
+                sendPacket(2,"action|buy\nitem|"..PackName)
+                sleep(500)
+                bought = bought + 1
+                for ia=1,#packitemid do
+                  if findItem(packitemid[ia]) == 200 then
+                    for _, tile in pairs(getTiles()) do
+                      if tile.fg == Pos.BGDropsPacket or tile.bg == Pos.BGDropsPacket then
+                        local abccc = ia-2
+                        findPath(tile.x+abccc,tile.y)
+                        sleep(2000)
+                        dropItem(packitemid[ia],findItem(packitemid[ia]))
+                        sleep(2000)
+                        goto nex
+                      end
+                    end
+                  end
+                end
+              end
+            end
+            ::nex::
+            if findItem(112) < packgems then
+              for i=1,#packitemid do
+                if findItem(packitemid[i]) > 0 then
+                  for _, tile in pairs(getTiles()) do
+                    if tile.fg == Pos.BGDropsPacket or tile.bg == Pos.BGDropsPacket then
+                      local abccc = i-2
+                      findPath(tile.x+abccc,tile.y)
+                      sleep(2000)
+                      dropItem(packitemid[i],findItem(packitemid[i]))
+                      sleep(2000)
+                    end
+                  end
+                  
+                end
+              end
+            end
+            if findItem(seedId) > 150 then
+              drop("seeddrop")
+            end
+          end
+
+          if value == "seeddrop" then
+            if findItem(seedId) > 150 then
+              if scanseed(seedId)< 3800 then
+                for _, tile in pairs(getTiles()) do
+                  if tile.fg == Pos.BGDropSeeds or tile.bg == Pos.BGDropSeeds  then 
+                      findPath(tile.x-1, tile.y)
+                      sleep(2000)
+                      dropItem(seedId,findItem(seedId)-40)
+                      sleep(2000)
+                  end
+              end              
+              end
+              if scanseed(seedId)> 3800 then
+                for _, tile in pairs(getTiles()) do
+                  if tile.fg == Pos.BGDropSeeds or tile.bg == Pos.BGDropSeeds then 
+                      findPath(tile.x-2, tile.y)
+                      sleep(2000)
+                      dropItem(seedId,findItem(seedId)-40)
+                      sleep(2000)
+                  end
+              end
+              end
+              seedDroped = seedDroped + scanseed(seedId)
+              sleep(1000)
+              webhuk(seedDroped.." Total dropped seed")
+              sleep(10000)
+            end
+
+            for i=1,#packitemid do
+              if findItem(packitemid[i]) > 0 then
+                drop("packetss")
+              end
+            end
+
+          end
+        end
+      end
+
+      sleep(10000)
+      joinworld(worlds[i],DoorID)
+    end
+    local function harvest()
+      for i=1,5 do
+          for _, tile in pairs(getTiles()) do
+              if tile.fg == seedId and findItem(seedId-1) < 190 and tile.ready then
+                  findPath(tile.x, tile.y)
+                  sleep(settings.delayharvest)
+                  punch(0,0)
+                  sleep(settings.delayharvest)
+                  collect(5)
+              end
+          end
+      end
+  end
+  function take(id)
+    for _, obj in pairs(getObjects()) do
+        if obj.id == id and findItem(seedId-1) < 190 then
+            local x = math.floor(obj.x/32)
+            local y = math.floor(obj.y/32)
+            findPath(x, y)
+            sleep(150)
+            collect(5)
+        end
+    end
+end
+    local function submain()
+      joinworld(worlds[i],DoorID)
+      sleep(2000)
+
+      while checkReadyTree(seedId) > 0 do
+        collectSet(true, 5)
+
+        if Custom.collcetMissBlock == true then
+          take(seedId-1) 
+          sleep(1000)
+          take(seedId)
+        end
+        webhuk("<:Bot:1035169530143576145> | Bot : ||"..getBot().name.."||\n<:mega:984686541383290940> | Information : "..MSG.harvest.."\n<:green_circle:984666691927691274> | Status : "..getBot().status.."\n<:globe_with_meridians:984683698123337828> | Current World : ||"..getBot().world.."||\n<:level:1042053001348644914> | Level : "..getBot().level.."\n===========================\n**Bot Backpack**\n <:gems:1038773949439414282>| gems: "..findItem(112).."\n===========================\n**ScriptInfo**\n <:clock00:1041990960416034856>| Uptime:\n "..getUptime(os.clock() - x).."")
+        if findItem(seedId-1) < 190 then
+          while harvest() do
+            harvest()
+           end
+        end
+
+        if Custom.collcetMissBlock == true then
+            take(seedId-1)
+            sleep(1000)
+            take(seedId)
+        end
+      
+        webhuk("<:Bot:1035169530143576145> | Bot : ||"..getBot().name.."||\n<:mega:984686541383290940> | Information : "..MSG.plant.."\n<:green_circle:984666691927691274> | Status : "..getBot().status.."\n<:globe_with_meridians:984683698123337828> | Current World : ||"..getBot().world.."||\n<:level:1042053001348644914> | Level : "..getBot().level.."\n===========================\n**Bot Backpack**\n <:gems:1038773949439414282>| gems: "..findItem(112).."\n===========================\n**ScriptInfo**\n <:clock00:1041990960416034856>| Uptime:\n "..getUptime(os.clock() - x).."")
+        while plant() do
+          plant()
+        end
+
+        if Custom.collcetMissBlock == true then
+          take(seedId-1)
+          sleep(1000)
+          take(seedId)
+        end
+
+        if findItem(seedId-1) > 0 then
+          webhuk("<:Bot:1035169530143576145> | Bot : ||"..getBot().name.."||\n<:mega:984686541383290940> | Information : "..MSG.pnb.." \n<:green_circle:984666691927691274> | Status : "..getBot().status.."\n<:globe_with_meridians:984683698123337828> | Current World : ||"..getBot().world.."||\n<:level:1042053001348644914> | Level : "..getBot().level.."\n===========================\n**Bot Backpack**\n <:gems:1038773949439414282>| gems: "..findItem(112).."\n===========================\n**ScriptInfo**\n <:clock00:1041990960416034856>| Uptime:\n "..getUptime(os.clock() - x).."")
+        end
+        while findItem(seedId-1) > 0 do
+          findPath(4,0)
+          sleep(1500)
+          pnb()
+        end
+
+        if Custom.collcetMissBlock == true then
+          take(seedId-1) 
+          sleep(1000)
+          take(seedId)
+        end
+        
+
+        if PackName ~= "gems_pack" and Custom.useCustom == true then
+          if findItem(112) > Custom.CustomBuyPack  then
+            collectSet(false, 2)
+            webhuk("<:Bot:1035169530143576145> | Bot : ||"..getBot().name.."||\n<:mega:984686541383290940> | Information : "..MSG.buypack.."\n<:green_circle:984666691927691274> | Status : "..getBot().status.."\n<:globe_with_meridians:984683698123337828> | Current World : ||"..getBot().world.."||\n<:level:1042053001348644914> | Level : "..getBot().level.."\n===========================\n**Bot Backpack**\n <:gems:1038773949439414282>| gems: "..findItem(112).."\n===========================\n**ScriptInfo**\n <:clock00:1041990960416034856>| Uptime:\n "..getUptime(os.clock() - x).."")
+            sleep(2000)
+            drop("packetss")
+            sleep(2000)
+          end
+        end
+
+        if PackName ~= "gems_pack" and Custom.useCustom == false then
+          if findItem(112) > packgems  then
+            collectSet(false, 2)
+            webhuk("<:Bot:1035169530143576145> | Bot : ||"..getBot().name.."||\n<:mega:984686541383290940> | Information : "..MSG.buypack.."\n<:green_circle:984666691927691274> | Status : "..getBot().status.."\n<:globe_with_meridians:984683698123337828> | Current World : ||"..getBot().world.."||\n<:level:1042053001348644914> | Level : "..getBot().level.."\n===========================\n**Bot Backpack**\n <:gems:1038773949439414282>| gems: "..findItem(112).."\n===========================\n**ScriptInfo**\n <:clock00:1041990960416034856>| Uptime:\n "..getUptime(os.clock() - x).."")
+            sleep(2000)
+            drop("packetss")
+            sleep(2000)
+          end
+        end
+
+        if findItem(seedId) > 150 then
+          collectSet(false, 2)
+          webhuk("<:Bot:1035169530143576145> | Bot : ||"..getBot().name.."||\n<:mega:984686541383290940> | Information : "..MSG.seedDrop.."\n<:green_circle:984666691927691274> | Status : "..getBot().status.."\n<:globe_with_meridians:984683698123337828> | Current World : ||"..getBot().world.."||\n<:level:1042053001348644914> | Level : "..getBot().level.."\n===========================\n**Bot Backpack**\n <:gems:1038773949439414282>| gems: "..findItem(112).."\n===========================\n**ScriptInfo**\n <:clock00:1041990960416034856>| Uptime:\n "..getUptime(os.clock() - x).."")
+          sleep(2500)
+          drop("seeddrop")
+          sleep(2500)
+        end
+      end
+      if checkReadyTree(seedId) < 1 then
+        local pozisyonx1 = math.floor(getposx() /32)
+        local pozisyony1 = math.floor(getposy() /32)
+
+      
+        while findItem(seedId-1) > 0 do
+          findPath(4,0)
+          sleep(1500)
+          pnb()
+        end
+
+        while plant() do
+          plant()
+        end
+
+        if PackName ~= "gems_pack" and Custom.useCustom == true then
+          if findItem(112) > Custom.CustomBuyPack then
+            webhuk("<:Bot:1035169530143576145> | Bot : ||"..getBot().name.."||\n<:mega:984686541383290940> | Information : "..MSG.buypack.."\n<:green_circle:984666691927691274> | Status : "..getBot().status.."\n<:globe_with_meridians:984683698123337828> | Current World : ||"..getBot().world.."||\n<:level:1042053001348644914> | Level : "..getBot().level.."\n===========================\n**Bot Backpack**\n <:gems:1038773949439414282>| gems: "..findItem(112).."\n===========================\n**ScriptInfo**\n <:clock00:1041990960416034856>| Uptime:\n "..getUptime(os.clock() - x).."")
+            sleep(2000)
+            drop("packetss")
+            sleep(2000)
+          end
+        end
+
+        if PackName ~= "gems_pack" and Custom.useCustom == false then
+          webhuk("<:Bot:1035169530143576145> | Bot : ||"..getBot().name.."||\n<:mega:984686541383290940> | Information : "..MSG.buypack.."\n<:green_circle:984666691927691274> | Status : "..getBot().status.."\n<:globe_with_meridians:984683698123337828> | Current World : ||"..getBot().world.."||\n<:level:1042053001348644914> | Level : "..getBot().level.."\n===========================\n**Bot Backpack**\n <:gems:1038773949439414282>| gems: "..findItem(112).."\n===========================\n**ScriptInfo**\n <:clock00:1041990960416034856>| Uptime:\n "..getUptime(os.clock() - x).."")
+          if findItem(112) > packgems  then
+            sleep(2000)
+            drop("packetss")
+            sleep(2000)
+          end
+        end
+        if getBot().world == worlds[check()]:upper() and checkReadyTree(seedId) < 1 and Custom.loop == false then
+          sleep(2000)
+          webhuk("<:Bot:1035169530143576145> | Bot : ||"..getBot().name.."||\n<:mega:984686541383290940> | Information : "..MSG.over.."\n<:green_circle:984666691927691274> | Status : "..getBot().status.."\n<:globe_with_meridians:984683698123337828> | Current World : ||"..getBot().world.."||\n<:level:1042053001348644914> | Level : "..getBot().level.."\n===========================\n**Bot Backpack**\n <:gems:1038773949439414282>| gems: "..findItem(112).."\n===========================\n**ScriptInfo**\n <:clock00:1041990960416034856>| Uptime:\n "..getUptime(os.clock() - x).."")
+          sleep(5000)
+          removeBot(botname)
+          sleep(10000)
+        end
+      end
+    end
+    submain()
+    sleep(2000)
+    webhuk("<:Bot:1035169530143576145> | Bot : ||"..getBot().name.."||\n<:mega:984686541383290940> | Information : "..MSG.finishw.."\n<:green_circle:984666691927691274> | Status : "..getBot().status.."\n<:globe_with_meridians:984683698123337828> | Current World : ||"..getBot().world.."||\n<:level:1042053001348644914> | Level : "..getBot().level.."\n===========================\n**Bot Backpack**\n <:gems:1038773949439414282>| gems: "..findItem(112).."\n===========================\n**ScriptInfo**\n <:clock00:1041990960416034856>| Uptime:\n "..getUptime(os.clock() - x).."")
+    sleep(10000)
+  end
+end
+
+
+
+    sleep(9000)
+    webhuk("<:Bot:1035169530143576145> | Bot : ||"..getBot().name.."||\n<:mega:984686541383290940> | Information : "..MSG.start.."\n<:green_circle:984666691927691274> | Status : "..getBot().status.."\n<:globe_with_meridians:984683698123337828> | Current World : ||"..getBot().world.."||\n<:level:1042053001348644914> | Level : "..getBot().level.."\n===========================\n**Bot Backpack**\n <:gems:1038773949439414282>| gems: "..findItem(112).."\n===========================\n**ScriptInfo**\n <:clock00:1041990960416034856>| Uptime:\n "..getUptime(os.clock() - x).."")
+    sleep(10000)
+
+    if getBot().status ~= "online" then
+      webhuk("<:Bot:1035169530143576145> | Bot : ||"..getBot().name.."||\n<:mega:984686541383290940> | Information : "..MSG.recon.." \n<:red_circle:987661002868936774> | Status : "..getBot().status.."")
+      sleep(10000)
+      while getBot().status ~= "online" do
+        connect()
+        sleep(5000)
+      end
+      webhuk("<:Bot:1035169530143576145> | Bot : ||"..getBot().name.."||\n<:mega:984686541383290940> | Information : "..MSG.online.."\n<:green_circle:984666691927691274> | Status : "..getBot().status.."\n<:globe_with_meridians:984683698123337828> | Current World : ||"..getBot().world.."||\n<:level:1042053001348644914> | Level : "..getBot().level.."\n===========================\n**Bot Backpack**\n <:gems:1038773949439414282>| gems: "..findItem(112).."\n===========================\n**ScriptInfo**\n <:clock00:1041990960416034856>| Uptime:\n "..getUptime(os.clock() - x).."")
+      sleep(10000)
+    end
+
+    if worldwhile == true then
+      while true do
+        main(#worlds)
+        sleep(2000)
+        webhuk("<:Bot:1035169530143576145> | Bot : ||"..getBot().name.."||\n<:mega:984686541383290940> | Information : "..MSG.info.."\n<:green_circle:984666691927691274> | Status : "..getBot().status.."\n<:globe_with_meridians:984683698123337828> | Current World : ||"..getBot().world.."||\n<:level:1042053001348644914> | Level : "..getBot().level.."\n===========================\n**Bot Backpack**\n <:gems:1038773949439414282>| gems: "..findItem(112).."\n===========================\n**ScriptInfo**\n <:clock00:1041990960416034856>| Uptime:\n "..getUptime(os.clock() - x).."")
+        sleep(10000)
+      end
+    end
+
