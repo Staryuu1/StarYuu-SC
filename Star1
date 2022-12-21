@@ -1,3 +1,6 @@
+aap = {}
+start = true
+count = 0
 
 local charset = {"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"}  do -- [0-9a-zA-Z]
   for c = 48, 57  do table.insert(charset, string.char(c)) end
