@@ -129,8 +129,10 @@ repeat
   sleep(1000)
   cid()
   sleep(1000)
+  if takepickaxe.usefeature == true then
   WearPickaxe()
   sleep(1000)
+  end
   removeBot(getBot().name)
   sleep(1000)
   count = count + 1
