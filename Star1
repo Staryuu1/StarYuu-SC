@@ -1,3 +1,4 @@
+
 aap = {}
 start = true
 count = 0
@@ -11,6 +12,18 @@ end
 local function randomString(length)
   if not length or length <= 0 then return '' end
   return randomString(length - 1) .. charset[math.random(1, #charset)]
+end
+
+function WearPickaxe()
+    sendPacket(3,"action|join_request\nname|"..takepickaxe.worldTake.."\ninvitedWorld|0")
+    sleep(5000)
+sendPacket(3,"action|join_request\nname|"..takepickaxe.worldTake.."|"..takepickaxe.worldTake.."\ninvitedWorld|0")
+    sleep(3000)
+    collect(2)
+    sleep(1200)
+    wear(98)
+    sleep(1600)
+    drop()
 end
 
 function w(text)
@@ -115,6 +128,8 @@ end
 repeat
   sleep(1000)
   cid()
+  sleep(1000)
+  WearPickaxe()
   sleep(1000)
   removeBot(getBot().name)
   sleep(1000)
